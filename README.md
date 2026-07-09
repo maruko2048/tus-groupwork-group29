@@ -7,29 +7,74 @@ T=1.229s である。
 
 # 関数一覧
 ```c
-int dijkstra(int N, int Lmat[maxN][maxN], int v0, int d[maxN], int p[maxN])←一旦ヒープ使う方にした 
+int dijkstra(int N, int Lmat[maxN][maxN], int v0, int v1, int d[maxN], int p[maxN])←一旦ヒープ使う方にした 
+(松村担当)
 ```
 ```c
-void neighborhood
+void cutEdge(int Lmat[maxN][maxN], struct edge edges[maxM], int id){
+    int u = edges[id].u;
+    int v = edges[id].v;
+
+    Lmat[u][v] = inf;
+    Lmat[v][u] = inf;
+}
+```
+```C
+void restoreEdge(int Lmat[maxN][maxN], struct edge edges[maxM], int id)
+{
+  int u = edges[id].u;
+  int v = edges[id].v;
+  int w = edges[id].w;
+
+  Lmat[u][v] = w;
+  Lmat[v][u] = w;
+}
+//辺IDというのはstruct edgesの配列の何番目の要素かということ
+```
+```C
+完全に貪欲法でダイクストラ法を回す　消したedgeIDと長さと消した本数をsolutionに入れる
 ```
 グラフに対しダイクストラ法で最短経路の長さを求める。intで長さを返す。  
-・ダイクストラ法の関数  
-・構成法(貪欲法,ランダム生成)の関数  
-・改善法(多スタート局所探索法)の関数
+- ダイクストラ法の関数  
+- 構成法(貪欲法,ランダム生成)の関数 
+- 改善法(多スタート局所探索法)の関数
 # 変数一覧
+## main外
 ```C
+#define maxN 200
+#define maxM 400
+#define inf 1000000
+```
+```C
+struct edge {
+  int u; //この頂点から
+  int v; //この頂点まで
+  int w; //重み(辺の重みを戻すときこれを使う)
+};
+
+struct solution {
+  int edgeId[maxK]; //消す辺のID
+  int count; //今何個消しているか
+  int value; //最短経路の長さ
+};
+
+struct cell { //ヒープ用
+  int key;
+  int vertex;
+};
+```
+## main内
+```C
+int i,j //いつもの
 int N, M; //頂点数, 辺数
-struct edge_data edge[maxM]; //辺データを表す変数
-int W[maxM]; //辺の重みを格納する配列
 int v0, v1; //始点, 終点を表す
 int k; //消す辺の数
 int d[maxN], p[maxN]; //始点から各頂点までの最短距離、最短経路木での親頂点を格納する
-int 
-```
+int Lmat[maxN][maxN];      // 重み行列
+int edgeIdMat[maxN][maxN]; // 頂点u-v間の辺ID
+struct edge edges[maxM];   // 辺IDごとの辺情報
+struct solution bestsolution; //ベストな解
 
-```c
-こういう風に書けばC記法でシンタックスハイライトされる
-printf("hello world!")
 ```
 
 # 細かい仕様
@@ -73,5 +118,8 @@ flowchart TD
     randomGreedy --> local
 
     output --> END([END])
-
 ```
+
+```mermaid
+%%{init:{'theme':'dark'}}%%
+
