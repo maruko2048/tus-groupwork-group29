@@ -3,7 +3,10 @@ T=1.229s である。
 コンピュータはだいたい1秒に10^8回計算できるので、オーダーが10^8を超えないように気を付ける。
 # 命名規則
 - 初めは小文字
-- ローマ字読み使わない
+- ローマ字\読み使わない
+
+aaaaaaaaaaaaaaaaaaaa
+
 # 関数一覧
 ```c
 int dijkstra(int N, int Lmat[maxN][maxN], int v0, int d[maxN], int p[maxN])←一旦ヒープ使う方にした 
