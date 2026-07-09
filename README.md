@@ -5,7 +5,7 @@ T=1.229s である。
 - 初めは小文字
 - ローマ字\読み使わない
 
-aaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaa
 
 # 関数一覧
 ```c
