@@ -46,7 +46,7 @@ void restoreEdge(int Lmat[maxN][maxN], struct edge edges[maxM], int id)
 #define inf 1000000
 ```
 ```C
-struct edge {
+struct edge_data {
   int u; //この頂点から
   int v; //この頂点まで
   int w; //重み(辺の重みを戻すときこれを使う)
