@@ -42,17 +42,17 @@ int dijkstra(int N, int Lmat[maxN][maxN], int v0, int v1, int d[maxN], int p[max
 
 /*ファイル名の取得とかデータの読み込みとかとりあえず書いてみたけど違ってたらごめん*/
 int main(void){
-    /*変数一覧から持ってきたもの*/
-    int i,j; //いつもの
-    int N, M; //頂点数, 辺数
-    int v0, v1; //始点, 終点を表す
-    int k; //消す辺の数
-    int d[maxN], p[maxN]; //始点から各頂点までの最短距離、最短経路木での親頂点を格納する
-    int Lmat[maxN][maxN];      // 重み行列
-    int edgeIdMat[maxN][maxN]; // 頂点u-v間の辺ID
-    struct edge edges[maxM];   // 辺IDごとの辺情報
-    struct solution bestsolution; //ベストな解
-    int u,v,len;
+  /*変数一覧から持ってきたもの*/
+  int i,j; //いつもの
+  int N, M; //頂点数, 辺数
+  int v0, v1; //始点, 終点を表す
+  int k; //消す辺の数
+  int d[maxN], p[maxN]; //始点から各頂点までの最短距離、最短経路木での親頂点を格納する
+  int Lmat[maxN][maxN];      // 重み行列
+  int edgeIdMat[maxN][maxN]; // 頂点u-v間の辺ID
+  struct edge_data edges[maxM];   // 辺IDごとの辺情報
+  struct solution bestsolution; //ベストな解
+  int u,v,len;
   char fname[128]; /* 読み込むファイルの名前 */
   FILE *fp; /* 入力ファイル */
   printf("input filename: "); /* ファイル名の入力を要求 */
@@ -101,20 +101,20 @@ int dijkstra(int N, int Lmat[maxN][maxN], int v0, int v1, int d[maxN], int p[max
     hsize--;
     for(w=0;w<N;w++){
       if(Lmat[v][w]==inf){
-	continue;}
+	      continue;}
       if(adr[w]==-1 && d[w]!=inf){
-	continue;}
+	      continue;}
       if(d[w]==inf){
-	d[w]=d[v]+Lmat[v][w];
-	p[w]=v;
-	insert(Heap,adr,hsize,d[w],w);
-	hsize++;
+	      d[w]=d[v]+Lmat[v][w];
+	      p[w]=v;
+	      insert(Heap,adr,hsize,d[w],w);
+	      hsize++;
       }
       else if(d[v]+Lmat[v][w]<d[w]){
-	d[w]=d[v]+Lmat[v][w];
-	p[w]=v;
-	decrease_key(Heap,adr,adr[w],d[w]);
-      }
+	      d[w]=d[v]+Lmat[v][w];
+	      p[w]=v;
+	      decrease_key(Heap,adr,adr[w],d[w]);
+      } 
     }
   }
   return d[v1];
