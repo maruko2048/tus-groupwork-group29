@@ -1,17 +1,22 @@
 # プログラミング演習2 グループワーク
+
 T=1.229s である。
 コンピュータはだいたい1秒に10^8回計算できるので、オーダーが10^8を超えないように気を付ける。
+
 # 命名規則
+
 - 初めは小文字
 - ローマ字読み使わない
 
 # 関数一覧
+
 ```c
-int dijkstra(int N, int Lmat[maxN][maxN], int v0, int v1, int d[maxN], int p[maxN])←一旦ヒープ使う方にした 
+int dijkstra(int N, int Lmat[maxN][maxN], int v0, int v1, int d[maxN], int p[maxN])←一旦ヒープ使う方にした
 (松村担当)
 ```
+
 ```c
-void cutEdge(int Lmat[maxN][maxN], struct edge edges[maxM], int id){
+void cutEdge(int Lmat[maxN][maxN], struct edge_data edges[maxM], int id){
     int u = edges[id].u;
     int v = edges[id].v;
 
@@ -19,8 +24,9 @@ void cutEdge(int Lmat[maxN][maxN], struct edge edges[maxM], int id){
     Lmat[v][u] = inf;
 }
 ```
+
 ```C
-void restoreEdge(int Lmat[maxN][maxN], struct edge edges[maxM], int id)
+void restoreEdge(int Lmat[maxN][maxN], struct edge_data edges[maxM], int id)
 {
   int u = edges[id].u;
   int v = edges[id].v;
@@ -31,20 +37,75 @@ void restoreEdge(int Lmat[maxN][maxN], struct edge edges[maxM], int id)
 }
 //辺IDというのはstruct edgesの配列の何番目の要素かということ
 ```
+
 ```C
-完全に貪欲法でダイクストラ法を回す　消したedgeIDと長さと消した本数をsolutionに入れる
+//完全に貪欲法でダイクストラ法を回す　消したedgeIDと長さと消した本数をsolutionに入れる
+void greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *sol)
+{
+  int d[maxN];
+  int p[maxN];
+
+  sol->count = 0;
+
+  for(int t=0;t<K;t++){
+    // 現在の最短経路
+    dijkstra(N,Lmat,v0,v1,d,p);
+
+    int bestEdge = -1;
+    int bestValue = -1;
+
+        // 最短経路を逆向きにたどる
+        int v = v1;
+
+        while(v != v0){
+
+            int u = p[v];
+            int id = edgeIdMat[u][v];
+
+            // 一時削除
+            cutEdge(Lmat,edges,id);
+
+            int value = dijkstra(N,Lmat,v0,v1,d,p);
+
+            if(value > bestValue){
+                bestValue = value;
+                bestEdge = id;
+            }
+
+            restoreEdge(Lmat,edges,id);
+
+            v = u;
+        }
+
+        if(bestEdge == -1)
+            break;
+
+        cutEdge(Lmat,edges,bestEdge);
+
+        sol->edgeId[sol->count] = bestEdge;
+        sol->count++;
+    }
+
+    sol->value = dijkstra(N,Lmat,v0,v1,d,p);
+}
 ```
-グラフに対しダイクストラ法で最短経路の長さを求める。intで長さを返す。  
-- ダイクストラ法の関数  
-- 構成法(貪欲法,ランダム生成)の関数 
+
+グラフに対しダイクストラ法で最短経路の長さを求める。intで長さを返す。
+
+- ダイクストラ法の関数
+- 構成法(貪欲法,ランダム生成)の関数
 - 改善法(多スタート局所探索法)の関数
+
 # 変数一覧
+
 ## main外
+
 ```C
 #define maxN 200
 #define maxM 400
 #define inf 1000000
 ```
+
 ```C
 struct edge_data {
   int u; //この頂点から
@@ -63,7 +124,9 @@ struct cell { //ヒープ用
   int vertex;
 };
 ```
+
 ## main内
+
 ```C
 int i,j //いつもの
 int N, M; //頂点数, 辺数
@@ -78,12 +141,14 @@ struct solution bestsolution; //ベストな解
 ```
 
 # 細かい仕様
+
 - 初期解生成はSの切り落とす辺の重みを1000000にすることによって実現
 - 初期状態のSと作業中のSと最良解のSをもつ
 
-
 # フローチャート
+
 以下にmain.cの(大まかな)フローチャートを示す。
+
 ```mermaid
 %%{init:{'theme':'dark'}}%%
 flowchart TD
@@ -123,3 +188,4 @@ flowchart TD
 ```mermaid
 %%{init:{'theme':'dark'}}%%
 
+```
