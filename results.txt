@@ -1,120 +1,120 @@
 Results
 ========================================
-Running: DataFiles/data8.txt
-input filename: File Name: DataFiles/data8.txt
+Running: DataFiles\data8.txt
+input filename: File Name: DataFiles\data8.txt 
 Value: 13
 Best Value: 13
 Dijkstra calls: 10
-time: 0.000004 sec
+time: 0.000000 sec
 ========================================
-Running: DataFiles/data14-1.txt
-input filename: File Name: DataFiles/data14-1.txt
+Running: DataFiles\data14-1.txt
+input filename: File Name: DataFiles\data14-1.txt 
 Value: 26
 Best Value: 32
 Dijkstra calls: 7
-time: 0.000005 sec
+time: 0.000000 sec
 ========================================
-Running: DataFiles/data14-2.txt
-input filename: File Name: DataFiles/data14-2.txt
+Running: DataFiles\data14-2.txt
+input filename: File Name: DataFiles\data14-2.txt 
 Value: 26
 Best Value: 32
 Dijkstra calls: 7
-time: 0.000005 sec
+time: 0.000000 sec
 ========================================
-Running: DataFiles/data17-1.txt
-input filename: File Name: DataFiles/data17-1.txt
+Running: DataFiles\data17-1.txt
+input filename: File Name: DataFiles\data17-1.txt 
 Value: 22
 Best Value: 27
 Dijkstra calls: 8
-time: 0.000008 sec
+time: 0.000000 sec
 ========================================
-Running: DataFiles/data17-2.txt
-input filename: File Name: DataFiles/data17-2.txt
+Running: DataFiles\data17-2.txt
+input filename: File Name: DataFiles\data17-2.txt 
 Value: 27
 Best Value: 32
 Dijkstra calls: 7
-time: 0.000005 sec
+time: 0.000000 sec
 ========================================
-Running: DataFiles/data50-1.txt
-input filename: File Name: DataFiles/data50-1.txt
+Running: DataFiles\data50-1.txt
+input filename: File Name: DataFiles\data50-1.txt 
 Value: 51
 Best Value: 57
 Dijkstra calls: 27
-time: 0.000053 sec
+time: 0.000000 sec
 ========================================
-Running: DataFiles/data50-2.txt
-input filename: File Name: DataFiles/data50-2.txt
+Running: DataFiles\data50-2.txt
+input filename: File Name: DataFiles\data50-2.txt 
 Value: 48
 Best Value: 55
 Dijkstra calls: 29
-time: 0.000056 sec
+time: 0.000000 sec
 ========================================
-Running: DataFiles/data50-3.txt
-input filename: File Name: DataFiles/data50-3.txt
+Running: DataFiles\data50-3.txt
+input filename: File Name: DataFiles\data50-3.txt 
 Value: 51
 Best Value: 57
 Dijkstra calls: 29
-time: 0.000051 sec
+time: 0.000000 sec
 ========================================
-Running: DataFiles/data50-4.txt
-input filename: File Name: DataFiles/data50-4.txt
+Running: DataFiles\data50-4.txt
+input filename: File Name: DataFiles\data50-4.txt 
 Value: 49
 Best Value: 56
 Dijkstra calls: 29
-time: 0.000056 sec
+time: 0.000000 sec
 ========================================
-Running: DataFiles/data100-1.txt
-input filename: File Name: DataFiles/data100-1.txt
+Running: DataFiles\data100-1.txt
+input filename: File Name: DataFiles\data100-1.txt 
 Value: 58
 Best Value: 67
 Dijkstra calls: 50
-time: 0.000274 sec
+time: 0.002000 sec
 ========================================
-Running: DataFiles/data100-2.txt
-input filename: File Name: DataFiles/data100-2.txt
+Running: DataFiles\data100-2.txt
+input filename: File Name: DataFiles\data100-2.txt 
 Value: 62
 Best Value: 71
 Dijkstra calls: 53
-time: 0.000256 sec
+time: 0.000000 sec
 ========================================
-Running: DataFiles/data100-3.txt
-input filename: File Name: DataFiles/data100-3.txt
+Running: DataFiles\data100-3.txt
+input filename: File Name: DataFiles\data100-3.txt 
 Value: 58
 Best Value: 64
 Dijkstra calls: 53
-time: 0.000281 sec
+time: 0.002000 sec
 ========================================
-Running: DataFiles/data100-4.txt
-input filename: File Name: DataFiles/data100-4.txt
+Running: DataFiles\data100-4.txt
+input filename: File Name: DataFiles\data100-4.txt 
 Value: 62
 Best Value: 68
 Dijkstra calls: 55
-time: 0.000295 sec
+time: 0.002000 sec
 ========================================
-Running: DataFiles/data162-1.txt
-input filename: File Name: DataFiles/data162-1.txt
+Running: DataFiles\data162-1.txt
+input filename: File Name: DataFiles\data162-1.txt 
 Value: 66
 Best Value: 72
 Dijkstra calls: 84
-time: 0.000984 sec
+time: 0.004000 sec
 ========================================
-Running: DataFiles/data162-2.txt
-input filename: File Name: DataFiles/data162-2.txt
+Running: DataFiles\data162-2.txt
+input filename: File Name: DataFiles\data162-2.txt 
 Value: 67
 Best Value: 74
 Dijkstra calls: 86
-time: 0.001032 sec
+time: 0.013000 sec
 ========================================
-Running: DataFiles/data162-3.txt
-input filename: File Name: DataFiles/data162-3.txt
+Running: DataFiles\data162-3.txt
+input filename: File Name: DataFiles\data162-3.txt 
 Value: 68
 Best Value: 74
 Dijkstra calls: 87
-time: 0.001014 sec
+time: 0.002000 sec
 ========================================
-Running: DataFiles/data162-4.txt
-input filename: File Name: DataFiles/data162-4.txt
+Running: DataFiles\data162-4.txt
+input filename: File Name: DataFiles\data162-4.txt 
 Value: 70
 Best Value: 75
 Dijkstra calls: 85
-time: 0.000997 sec
+time: 0.007000 sec
