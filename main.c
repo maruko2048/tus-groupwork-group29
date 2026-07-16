@@ -8,7 +8,9 @@
 #define maxM 400
 #define maxK 20
 #define inf 1000000
-#define time_limit 0.388
+#define time_limit 0.
+
+long long dijkstraCount = 0;
 
 struct edge_data
 {
@@ -111,6 +113,7 @@ int main(void)
   utime = (double)(end_t - start_t) / CLOCKS_PER_SEC;
   // showAnswer(bestsolution, M, k, fname, edges);
   showValue(bestsolution, M, k, fname, edges, bestvalue);
+  printf("Dijkstra calls: %lld\n", dijkstraCount);
   printf("time: %f sec\n", utime);
   return 0;
 }
@@ -118,6 +121,7 @@ int main(void)
 /*ダイクストラ絡みゾーン2 始まり*/
 int dijkstra(int N, int Lmat[maxN][maxN], int v0, int v1, int d[maxN], int p[maxN])
 {
+  dijkstraCount++;
   struct cell Heap[maxN]; /* ヒープに用いる配列の宣言 */
   int adr[maxN];          /* ヒープに含まれる頂点のアドレスの配列 */
   int hsize;              /* ヒープに格納された頂点の数 */
@@ -256,10 +260,7 @@ int delete_min(struct cell *H, int *adr, int hsize)
   return v;
 }
 /*ダイクストラ絡みゾーン2 終わり*/
-void cutEdge(
-    int Lmat[maxN][maxN],
-    struct edge_data edges[],
-    int id)
+void cutEdge(int Lmat[maxN][maxN], struct edge_data edges[], int id)
 {
   int u = edges[id].u;
   int v = edges[id].v;
@@ -267,11 +268,7 @@ void cutEdge(
   Lmat[u][v] = inf;
   Lmat[v][u] = inf;
 }
-
-void restoreEdge(
-    int Lmat[maxN][maxN],
-    struct edge_data edges[],
-    int id)
+void restoreEdge(int Lmat[maxN][maxN], struct edge_data edges[], int id)
 {
   int u = edges[id].u;
   int v = edges[id].v;
@@ -280,7 +277,6 @@ void restoreEdge(
   Lmat[u][v] = w;
   Lmat[v][u] = w;
 }
-
 struct solution greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1)
 {
   int d[maxN];

@@ -4,100 +4,117 @@ Running: DataFiles/data8.txt
 input filename: File Name: DataFiles/data8.txt
 Value: 13
 Best Value: 13
-time: 0.000003 sec
+Dijkstra calls: 10
+time: 0.000004 sec
 ========================================
 Running: DataFiles/data14-1.txt
 input filename: File Name: DataFiles/data14-1.txt
 Value: 26
 Best Value: 32
-time: 0.000006 sec
+Dijkstra calls: 7
+time: 0.000005 sec
 ========================================
 Running: DataFiles/data14-2.txt
 input filename: File Name: DataFiles/data14-2.txt
 Value: 26
 Best Value: 32
-time: 0.000004 sec
+Dijkstra calls: 7
+time: 0.000005 sec
 ========================================
 Running: DataFiles/data17-1.txt
 input filename: File Name: DataFiles/data17-1.txt
 Value: 22
 Best Value: 27
+Dijkstra calls: 8
 time: 0.000008 sec
 ========================================
 Running: DataFiles/data17-2.txt
 input filename: File Name: DataFiles/data17-2.txt
 Value: 27
 Best Value: 32
-time: 0.000008 sec
+Dijkstra calls: 7
+time: 0.000005 sec
 ========================================
 Running: DataFiles/data50-1.txt
 input filename: File Name: DataFiles/data50-1.txt
 Value: 51
 Best Value: 57
-time: 0.000048 sec
+Dijkstra calls: 27
+time: 0.000053 sec
 ========================================
 Running: DataFiles/data50-2.txt
 input filename: File Name: DataFiles/data50-2.txt
 Value: 48
 Best Value: 55
-time: 0.000054 sec
+Dijkstra calls: 29
+time: 0.000056 sec
 ========================================
 Running: DataFiles/data50-3.txt
 input filename: File Name: DataFiles/data50-3.txt
 Value: 51
 Best Value: 57
-time: 0.000048 sec
+Dijkstra calls: 29
+time: 0.000051 sec
 ========================================
 Running: DataFiles/data50-4.txt
 input filename: File Name: DataFiles/data50-4.txt
 Value: 49
 Best Value: 56
-time: 0.000048 sec
+Dijkstra calls: 29
+time: 0.000056 sec
 ========================================
 Running: DataFiles/data100-1.txt
 input filename: File Name: DataFiles/data100-1.txt
 Value: 58
 Best Value: 67
-time: 0.000319 sec
+Dijkstra calls: 50
+time: 0.000274 sec
 ========================================
 Running: DataFiles/data100-2.txt
 input filename: File Name: DataFiles/data100-2.txt
 Value: 62
 Best Value: 71
-time: 0.000235 sec
+Dijkstra calls: 53
+time: 0.000256 sec
 ========================================
 Running: DataFiles/data100-3.txt
 input filename: File Name: DataFiles/data100-3.txt
 Value: 58
 Best Value: 64
-time: 0.000250 sec
+Dijkstra calls: 53
+time: 0.000281 sec
 ========================================
 Running: DataFiles/data100-4.txt
 input filename: File Name: DataFiles/data100-4.txt
 Value: 62
 Best Value: 68
-time: 0.000269 sec
+Dijkstra calls: 55
+time: 0.000295 sec
 ========================================
 Running: DataFiles/data162-1.txt
 input filename: File Name: DataFiles/data162-1.txt
 Value: 66
 Best Value: 72
-time: 0.000854 sec
+Dijkstra calls: 84
+time: 0.000984 sec
 ========================================
 Running: DataFiles/data162-2.txt
 input filename: File Name: DataFiles/data162-2.txt
 Value: 67
 Best Value: 74
-time: 0.000861 sec
+Dijkstra calls: 86
+time: 0.001032 sec
 ========================================
 Running: DataFiles/data162-3.txt
 input filename: File Name: DataFiles/data162-3.txt
 Value: 68
 Best Value: 74
-time: 0.000916 sec
+Dijkstra calls: 87
+time: 0.001014 sec
 ========================================
 Running: DataFiles/data162-4.txt
 input filename: File Name: DataFiles/data162-4.txt
 Value: 70
 Best Value: 75
-time: 0.000862 sec
+Dijkstra calls: 85
+time: 0.000997 sec
