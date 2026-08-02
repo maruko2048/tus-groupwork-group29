@@ -1,120 +1,272 @@
 Results
+Binvec times:
+Run 1: 0.107309
+Run 2: 0.109552
+Run 3: 0.110113
+Run 4: 0.110771
+Run 5: 0.104620
+T: 0.542365
+
 ========================================
-Running: DataFiles\data8.txt
-input filename: File Name: DataFiles\data8.txt 
+Running: DataFiles/data8.txt
+
+File Name: DataFiles/data8.txt
 Value: 13
 Best Value: 13
-Dijkstra calls: 10
-time: 0.000000 sec
+Removed Edges: 
+(  4,   7) w: 4
+(  0,   3) w: 3
+Dijkstra calls: 7117191
+time: 0.542366 sec
+
 ========================================
-Running: DataFiles\data14-1.txt
-input filename: File Name: DataFiles\data14-1.txt 
-Value: 26
+Running: DataFiles/data14-1.txt
+
+File Name: DataFiles/data14-1.txt
+Value: 32
 Best Value: 32
-Dijkstra calls: 7
-time: 0.000000 sec
+Removed Edges: 
+(  0,   5) w: 11
+(  6,  13) w: 10
+Dijkstra calls: 2995402
+time: 0.542366 sec
+
 ========================================
-Running: DataFiles\data14-2.txt
-input filename: File Name: DataFiles\data14-2.txt 
-Value: 26
+Running: DataFiles/data14-2.txt
+
+File Name: DataFiles/data14-2.txt
+Value: 30
 Best Value: 32
-Dijkstra calls: 7
-time: 0.000000 sec
+Removed Edges: 
+(  0,   8) w: 11
+(  0,   6) w: 12
+Dijkstra calls: 3288653
+time: 0.542368 sec
+
 ========================================
-Running: DataFiles\data17-1.txt
-input filename: File Name: DataFiles\data17-1.txt 
-Value: 22
-Best Value: 27
-Dijkstra calls: 8
-time: 0.000000 sec
-========================================
-Running: DataFiles\data17-2.txt
-input filename: File Name: DataFiles\data17-2.txt 
+Running: DataFiles/data17-1.txt
+
+File Name: DataFiles/data17-1.txt
 Value: 27
+Best Value: 27
+Removed Edges: 
+(  9,  16) w: 10
+(  0,   6) w: 11
+Dijkstra calls: 2439266
+time: 0.542366 sec
+
+========================================
+Running: DataFiles/data17-2.txt
+
+File Name: DataFiles/data17-2.txt
+Value: 32
 Best Value: 32
-Dijkstra calls: 7
-time: 0.000000 sec
+Removed Edges: 
+(  0,   9) w: 10
+( 10,  16) w: 13
+Dijkstra calls: 2819834
+time: 0.542368 sec
+
 ========================================
-Running: DataFiles\data50-1.txt
-input filename: File Name: DataFiles\data50-1.txt 
-Value: 51
+Running: DataFiles/data50-1.txt
+
+File Name: DataFiles/data50-1.txt
+Value: 57
 Best Value: 57
-Dijkstra calls: 27
-time: 0.000000 sec
+Removed Edges: 
+( 27,  40) w: 7
+( 36,  49) w: 11
+( 13,  20) w: 6
+( 28,  37) w: 5
+Dijkstra calls: 431199
+time: 0.542389 sec
+
 ========================================
-Running: DataFiles\data50-2.txt
-input filename: File Name: DataFiles\data50-2.txt 
-Value: 48
+Running: DataFiles/data50-2.txt
+
+File Name: DataFiles/data50-2.txt
+Value: 55
 Best Value: 55
-Dijkstra calls: 29
-time: 0.000000 sec
+Removed Edges: 
+( 17,  30) w: 5
+( 15,  22) w: 5
+( 28,  38) w: 6
+( 32,  40) w: 7
+Dijkstra calls: 433783
+time: 0.542445 sec
+
 ========================================
-Running: DataFiles\data50-3.txt
-input filename: File Name: DataFiles\data50-3.txt 
-Value: 51
+Running: DataFiles/data50-3.txt
+
+File Name: DataFiles/data50-3.txt
+Value: 57
 Best Value: 57
-Dijkstra calls: 29
-time: 0.000000 sec
+Removed Edges: 
+( 18,  27) w: 6
+( 32,  37) w: 8
+( 40,  49) w: 13
+( 10,  19) w: 13
+Dijkstra calls: 457754
+time: 0.542386 sec
+
 ========================================
-Running: DataFiles\data50-4.txt
-input filename: File Name: DataFiles\data50-4.txt 
-Value: 49
+Running: DataFiles/data50-4.txt
+
+File Name: DataFiles/data50-4.txt
+Value: 56
 Best Value: 56
-Dijkstra calls: 29
-time: 0.000000 sec
+Removed Edges: 
+( 32,  36) w: 7
+( 26,  34) w: 7
+( 13,  22) w: 5
+( 30,  33) w: 7
+Dijkstra calls: 417847
+time: 0.542386 sec
+
 ========================================
-Running: DataFiles\data100-1.txt
-input filename: File Name: DataFiles\data100-1.txt 
-Value: 58
+Running: DataFiles/data100-1.txt
+
+File Name: DataFiles/data100-1.txt
+Value: 64
 Best Value: 67
-Dijkstra calls: 50
-time: 0.002000 sec
+Removed Edges: 
+( 75,  99) w: 11
+( 66,  78) w: 10
+( 59,  83) w: 8
+( 40,  55) w: 10
+( 27,  41) w: 5
+( 74,  99) w: 14
+( 91,  99) w: 7
+Dijkstra calls: 110356
+time: 0.542472 sec
+
 ========================================
-Running: DataFiles\data100-2.txt
-input filename: File Name: DataFiles\data100-2.txt 
-Value: 62
+Running: DataFiles/data100-2.txt
+
+File Name: DataFiles/data100-2.txt
+Value: 71
 Best Value: 71
-Dijkstra calls: 53
-time: 0.000000 sec
+Removed Edges: 
+( 47,  61) w: 5
+( 65,  76) w: 5
+( 59,  73) w: 7
+( 17,  30) w: 10
+( 69,  83) w: 7
+( 62,  75) w: 5
+( 93,  99) w: 5
+Dijkstra calls: 128998
+time: 0.542554 sec
+
 ========================================
-Running: DataFiles\data100-3.txt
-input filename: File Name: DataFiles\data100-3.txt 
-Value: 58
+Running: DataFiles/data100-3.txt
+
+File Name: DataFiles/data100-3.txt
+Value: 64
 Best Value: 64
-Dijkstra calls: 53
-time: 0.002000 sec
+Removed Edges: 
+( 67,  83) w: 6
+( 69,  71) w: 5
+( 72,  99) w: 11
+( 84,  99) w: 10
+( 43,  62) w: 7
+( 82,  99) w: 12
+( 24,  38) w: 6
+Dijkstra calls: 126213
+time: 0.542530 sec
+
 ========================================
-Running: DataFiles\data100-4.txt
-input filename: File Name: DataFiles\data100-4.txt 
-Value: 62
-Best Value: 68
-Dijkstra calls: 55
-time: 0.002000 sec
-========================================
-Running: DataFiles\data162-1.txt
-input filename: File Name: DataFiles\data162-1.txt 
-Value: 66
-Best Value: 72
-Dijkstra calls: 84
-time: 0.004000 sec
-========================================
-Running: DataFiles\data162-2.txt
-input filename: File Name: DataFiles\data162-2.txt 
-Value: 67
-Best Value: 74
-Dijkstra calls: 86
-time: 0.013000 sec
-========================================
-Running: DataFiles\data162-3.txt
-input filename: File Name: DataFiles\data162-3.txt 
+Running: DataFiles/data100-4.txt
+
+File Name: DataFiles/data100-4.txt
 Value: 68
-Best Value: 74
-Dijkstra calls: 87
-time: 0.002000 sec
+Best Value: 68
+Removed Edges: 
+( 42,  48) w: 7
+( 58,  73) w: 5
+( 65,  83) w: 5
+( 63,  82) w: 9
+( 69,  72) w: 8
+(  6,  15) w: 5
+( 26,  39) w: 5
+Dijkstra calls: 118137
+time: 0.542533 sec
+
 ========================================
-Running: DataFiles\data162-4.txt
-input filename: File Name: DataFiles\data162-4.txt 
-Value: 70
+Running: DataFiles/data162-1.txt
+
+File Name: DataFiles/data162-1.txt
+Value: 73
+Best Value: 72
+Removed Edges: 
+(111, 136) w: 6
+( 98, 115) w: 9
+( 43,  76) w: 6
+( 84, 108) w: 7
+(118, 122) w: 5
+(123, 161) w: 10
+(132, 161) w: 15
+(131, 161) w: 13
+(110, 128) w: 10
+(138, 161) w: 13
+Dijkstra calls: 153337
+time: 1.627758 sec
+
+========================================
+Running: DataFiles/data162-2.txt
+
+File Name: DataFiles/data162-2.txt
+Value: 72
+Best Value: 74
+Removed Edges: 
+(119, 126) w: 5
+( 44,  65) w: 6
+(111, 124) w: 9
+(140, 161) w: 14
+(127, 161) w: 11
+(118, 121) w: 13
+( 63,  83) w: 6
+(143, 161) w: 5
+( 69,  99) w: 8
+(140, 151) w: 5
+Dijkstra calls: 155849
+time: 1.627931 sec
+
+========================================
+Running: DataFiles/data162-3.txt
+
+File Name: DataFiles/data162-3.txt
+Value: 73
+Best Value: 74
+Removed Edges: 
+(122, 161) w: 10
+( 78,  93) w: 5
+(119, 138) w: 6
+(143, 161) w: 6
+( 62,  97) w: 7
+( 72,  94) w: 6
+(131, 161) w: 14
+( 68,  89) w: 11
+( 82, 111) w: 9
+(147, 161) w: 5
+Dijkstra calls: 152022
+time: 1.628206 sec
+
+========================================
+Running: DataFiles/data162-4.txt
+
+File Name: DataFiles/data162-4.txt
+Value: 74
 Best Value: 75
-Dijkstra calls: 85
-time: 0.007000 sec
+Removed Edges: 
+( 89, 115) w: 6
+(108, 126) w: 5
+( 56,  79) w: 7
+( 25,  57) w: 5
+(136, 161) w: 11
+(123, 161) w: 12
+( 73, 100) w: 5
+( 13,  28) w: 7
+(137, 147) w: 9
+(  0,  35) w: 13
+Dijkstra calls: 151352
+time: 1.629023 sec

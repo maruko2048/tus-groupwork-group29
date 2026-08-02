@@ -2,3 +2,5 @@
 *exe
 main
 binvec
+benchmark.txt
+*.csv

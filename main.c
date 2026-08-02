@@ -8,7 +8,6 @@
 #define maxM 400
 #define maxK 20
 #define inf 1000000
-#define time_limit 0.
 
 long long dijkstraCount = 0;
 
@@ -45,36 +44,59 @@ int dijkstra(int N, int Lmat[maxN][maxN], int v0, int v1, int d[maxN], int p[max
 void cutEdge(int Lmat[maxN][maxN], struct edge_data edges[maxM], int id);
 void restoreEdge(int Lmat[maxN][maxN], struct edge_data edges[maxM], int id);
 struct solution greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1);
+struct solution disturbInitialSolution(int N, int M, int K, int Lmat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *basesolution, int disturbCount);
+// 局所探索ゾーン
+void searchLocal(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *bestsolution, struct solution currentSolution, int goodNeighborCount); // 局所探索を行う関数
+int makeNeighborAndTry(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *bestsolution, int id1, int id2);                                 // 与えられたID1の辺を復元し、ID2の辺を削除し、評価し、更新をしたりしなかったりする
+// ここまで
 void showAnswer(struct solution bestsolution, int M, int K, char *fname, struct edge_data edges[], int bestvalue);
 void showValue(struct solution bestsolution, int M, int K, char *fname, struct edge_data edges[], int bestvalue);
 
 /*ファイル名の取得とかデータの読み込みとかとりあえず書いてみたけど違ってたらごめん*/
 // ↑一回やってみないとわからんね～ナイス
-int main(void)
+// ファイル名が存在しないとか、そういう例外処理は今回「考えない」
+int main(int argc, char *argv[])
 {
+  srand((unsigned)time(NULL));
+
   clock_t start_t, end_t;
   double utime;
+  double time_limit;
+  if (argc > 1)
+  {
+    time_limit = atof(argv[1]);
+  }
+  else
+  {
+    time_limit = 1; // デフォルトは1秒
+  }
 
   /*変数一覧から持ってきたもの*/
-  int i, j;                     // いつもの
-  int N, M;                     // 頂点数, 辺数
-  int v0, v1;                   // 始点, 終点を表す
-  int k;                        // 消す辺の数
-  int d[maxN], p[maxN];         // 始点から各頂点までの最短距離、最短経路木での親頂点を格納する
-  int Lmat[maxN][maxN];         // 重み行列
-  int edgeIdMat[maxN][maxN];    // 頂点u-v間の辺ID
-  struct edge_data edges[maxM]; // 辺IDごとの辺情報
-  struct solution bestsolution; // ベストな解
+  int i, j;                        // いつもの
+  int N, M;                        // 頂点数, 辺数
+  int v0, v1;                      // 始点, 終点を表す
+  int k;                           // 消す辺の数
+  int d[maxN], p[maxN];            // 始点から各頂点までの最短距離、最短経路木での親頂点を格納する
+  int Lmat[maxN][maxN];            // 重み行列
+  int edgeIdMat[maxN][maxN];       // 頂点u-v間の辺ID
+  struct edge_data edges[maxM];    // 辺IDごとの辺情報
+  struct solution bestsolution;    // ベストな解
+  struct solution initialsolution; //= {0}; // 完全貪欲法
+  struct solution currentSolution; // 局所探索で使う
+  struct solution greedysolution;  // 貪欲法で作った解
+  int searchCount = 0;
+
   int u, v, len;
   int bestvalue;
   char fname[128];                    /* 読み込むファイルの名前 */
   FILE *fp;                           /* 入力ファイル */
   printf("input filename: ");         /* ファイル名の入力を要求 */
   fgets(fname, sizeof(fname), stdin); /* 標準入力からファイル名を取得 */
-  fname[strlen(fname) - 1] = '\0';    /* 最後の改行コードを除去 */
-  fflush(stdin);                      /* 128 文字を超えた入力を標準入力から捨てる */
-  fp = fopen(fname, "r");             /* ファイルを読み込みモードで開く */
-  fscanf(fp, "%d %d", &N, &M);        /* ファイルから N, M を読み込む */
+  printf("\n");
+  fname[strlen(fname) - 1] = '\0'; /* 最後の改行コードを除去 */
+  fflush(stdin);                   /* 128 文字を超えた入力を標準入力から捨てる */
+  fp = fopen(fname, "r");          /* ファイルを読み込みモードで開く */
+  fscanf(fp, "%d %d", &N, &M);     /* ファイルから N, M を読み込む */
   if (N > maxN)
   {
     printf("N > maxN, redefine maxN\n");
@@ -104,15 +126,34 @@ int main(void)
   fscanf(fp, "%d", &k);
   fscanf(fp, "%d", &bestvalue);
   fclose(fp);
+
   // 処理開始
   start_t = clock();
-  //
-  // おためし
-  bestsolution = greedy(N, k, Lmat, edgeIdMat, edges, v0, v1);
-  end_t = clock();
-  utime = (double)(end_t - start_t) / CLOCKS_PER_SEC;
-  // showAnswer(bestsolution, M, k, fname, edges);
-  showValue(bestsolution, M, k, fname, edges, bestvalue);
+  greedysolution = greedy(N, k, Lmat, edgeIdMat, edges, v0, v1);
+  bestsolution = greedysolution; // とりあえず貪欲法の解を最良としておく
+  currentSolution = greedysolution;
+  searchLocal(N, k, Lmat, edgeIdMat, edges, v0, v1, &bestsolution, currentSolution, 2); // 3個のより良い近傍解を見つけたら更新する 3は勘で設定した
+  // disturbCountは2->3->4->5->2->3->4->5...と繰り返す 1は局所探索でやってるのとほぼ同じなので
+  int disturbCount = 1; // 乱す辺の数
+  while (1)
+  {
+    currentSolution = greedysolution;
+    disturbCount++;
+    if (disturbCount > 10)
+    {
+      disturbCount = 2;
+    }
+    currentSolution = disturbInitialSolution(N, M, k, Lmat, edges, v0, v1, &currentSolution, disturbCount);
+    searchLocal(N, k, Lmat, edgeIdMat, edges, v0, v1, &bestsolution, currentSolution, 2); // 3個のより良い近傍解を見つけたら更新する 3は勘で設定した
+    end_t = clock();
+    utime = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+    if (utime > time_limit)
+    {
+      break;
+    }
+  }
+  showAnswer(bestsolution, M, k, fname, edges, bestvalue);
+  // showValue(bestsolution, M, k, fname, edges, bestvalue);
   printf("Dijkstra calls: %lld\n", dijkstraCount);
   printf("time: %f sec\n", utime);
   return 0;
@@ -171,7 +212,6 @@ int dijkstra(int N, int Lmat[maxN][maxN], int v0, int v1, int d[maxN], int p[max
   }
   return d[v1];
 }
-
 int parent(int i)
 {
   return (i - 1) / 2;
@@ -180,7 +220,6 @@ int left(int i)
 {
   return 2 * i + 1;
 }
-
 int right(int i)
 {
   return 2 * i + 2;
@@ -281,6 +320,7 @@ struct solution greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][m
 {
   int d[maxN];
   int p[maxN];
+  int temp_p[maxN];
   struct solution S;
 
   S.count = 0;
@@ -289,6 +329,11 @@ struct solution greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][m
   {
     // 現在の最短経路
     dijkstra(N, Lmat, v0, v1, d, p);
+    for (int i = 0; i < N; i++)
+    {
+      temp_p[i] = p[i];
+    }
+    //
 
     int bestEdge = -1;
     int bestValue = -1;
@@ -298,7 +343,7 @@ struct solution greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][m
 
     while (v != v0)
     {
-      int u = p[v];
+      int u = temp_p[v];
       int id = edgeIdMat[u][v];
 
       // 一時削除
@@ -330,12 +375,249 @@ struct solution greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][m
 
   return S;
 }
+// 近傍解探索(いい近傍解を見つけて更新するだけ)
+// goodNeighborCount個のより良い近傍解を見つけたら一番良いものに更新するようにする.
+void searchLocal(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *bestsolution, struct solution currentSolution, int goodNeighborCount)
+{
+  int d[maxN], p[maxN], temp_p[maxN];
+  int isImproved = 1;
 
+  while (isImproved)
+  {
+    int goodNeighbor = 0;
+    int bestValue = currentSolution.value;
+    int bestOldId = -1;
+    int bestNewId = -1;
+
+    isImproved = 0;
+
+    // 現在削除している辺を1本ずつ復元し、交換相手を探す
+    for (int i = 0; i < currentSolution.count; i++)
+    {
+      int id1 = currentSolution.edgeId[i];
+
+      // id1を復元したときの最短路を求める
+      restoreEdge(Lmat, edges, id1);
+      dijkstra(N, Lmat, v0, v1, d, p);
+
+      // この後の評価でもp[]を使うので、上書きされる前に保存する
+      for (int j = 0; j < N; j++)
+      {
+        temp_p[j] = p[j];
+      }
+
+      // いったん元のcurrentSolutionの状態に戻す
+      cutEdge(Lmat, edges, id1);
+
+      // id1を復元したことでできた最短路上の辺を交換候補にする
+      int v = v1;
+      while (v != v0)
+      {
+        int u = temp_p[v];
+        int id2;
+        int value;
+        int alreadyDeleted = 0;
+
+        if (u == -1)
+        {
+          break;
+        }
+        id2 = edgeIdMat[u][v];
+
+        // すでに削除中の別の辺はid2にできない
+        for (int j = 0; j < currentSolution.count; j++)
+        {
+          if (currentSolution.edgeId[j] == id2)
+          {
+            alreadyDeleted = 1;
+            break;
+          }
+        }
+
+        if (id1 != id2 && !alreadyDeleted)
+        {
+          // makeNeighborAndTryは評価後に必ずcurrentSolutionへ戻す
+          value = makeNeighborAndTry(N, K, Lmat, edgeIdMat, edges, v0, v1, &currentSolution, id1, id2);
+
+          if (value > currentSolution.value)
+          {
+            goodNeighbor++;
+            if (value > bestValue)
+            {
+              bestValue = value;
+              bestOldId = id1;
+              bestNewId = id2;
+            }
+          }
+        }
+
+        if (goodNeighbor >= goodNeighborCount)
+        {
+          break;
+        }
+        v = u;
+      }
+
+      if (goodNeighbor >= goodNeighborCount)
+      {
+        break;
+      }
+    }
+
+    // 改善近傍がなければ局所最適なので終了
+    if (bestOldId == -1)
+    {
+      break;
+    }
+
+    // 見つけた改善近傍のうち、一番良い交換だけを確定する
+    restoreEdge(Lmat, edges, bestOldId);
+    cutEdge(Lmat, edges, bestNewId);
+    for (int i = 0; i < currentSolution.count; i++)
+    {
+      if (currentSolution.edgeId[i] == bestOldId)
+      {
+        currentSolution.edgeId[i] = bestNewId;
+        break;
+      }
+    }
+    currentSolution.value = bestValue;
+    isImproved = 1;
+
+    if (currentSolution.value > bestsolution->value)
+    {
+      *bestsolution = currentSolution;
+    }
+  }
+}
+// 1つの辺を復元し、1つの辺を削除することで近傍解を作り、評価する関数 評価値を返す。更新はしない。
+int makeNeighborAndTry(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *bestsolution, int id1, int id2)
+{
+  if (id1 == id2)
+  {
+    return 0; // 無駄なので
+  }
+  // id1の辺を復元
+  restoreEdge(Lmat, edges, id1);
+  // id2の辺を削除
+  cutEdge(Lmat, edges, id2);
+
+  // 評価
+  int d[maxN];
+  int p[maxN];
+  int value = dijkstra(N, Lmat, v0, v1, d, p);
+
+  // 元に戻す
+  cutEdge(Lmat, edges, id1);
+  restoreEdge(Lmat, edges, id2);
+  return value;
+}
+// 初期解を乱す関数　disturbCount個の辺を復元し、同じ数だけ削除することで近傍解を作る
+struct solution disturbInitialSolution(int N, int M, int K, int Lmat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *basesolution, int disturbCount)
+{
+  struct solution S = *basesolution;
+
+  int positions[maxK];
+  int candidates[maxM];
+  int candidateCount = 0;
+  int d[maxN], p[maxN];
+
+  // Lmatとbasesolutionが同じでないと困るので、戻します
+  for (int id = 0; id < M; id++)
+  {
+    restoreEdge(Lmat, edges, id);
+  }
+
+  // basesolutionの切断状態をLmat上に再現する
+  for (int i = 0; i < basesolution->count; i++)
+  {
+    cutEdge(Lmat, edges, basesolution->edgeId[i]);
+  }
+
+  // disturbCountを都合よくする
+  if (disturbCount > K)
+  {
+    disturbCount = K;
+  }
+
+  if (disturbCount > M - K)
+  {
+    disturbCount = M - K;
+  }
+
+  // Solution->EdgeIdの添え字のための配列
+  for (int i = 0; i < K; i++)
+  {
+    positions[i] = i;
+  }
+
+  // positionsをシャッフルする
+  // これはFisher-Yatesのシャッフルアルゴリズム
+  // 先頭disturbCount個の位置を交換対象とする
+  for (int i = K - 1; i > 0; i--)
+  {
+    int j = rand() % (i + 1);
+    int temp = positions[i];
+    positions[i] = positions[j];
+    positions[j] = temp;
+  }
+  // candidates(切断候補)を作るための準備。すでに切断されている辺は除外する。
+  for (int id = 0; id < M; id++)
+  {
+    int isCut = 0;
+
+    for (int i = 0; i < K; i++)
+    {
+      if (basesolution->edgeId[i] == id)
+      {
+        isCut = 1;
+        break;
+      }
+    }
+
+    if (!isCut)
+    {
+      candidates[candidateCount] = id;
+      candidateCount++;
+    }
+  }
+  // candidatesをシャッフルする
+  // 先頭disturbCount個を新しく切断する辺とする
+  for (int i = candidateCount - 1; i > 0; i--)
+  {
+    int j = rand() % (i + 1);
+    int temp = candidates[i];
+    candidates[i] = candidates[j];
+    candidates[j] = temp;
+  }
+
+  // disturbCount本の辺を入れ替える
+  for (int i = 0; i < disturbCount; i++)
+  {
+    int position = positions[i];
+
+    int restoreId = S.edgeId[position];
+    int cutId = candidates[i];
+
+    // 元々cutされていた辺を復元する
+    restoreEdge(Lmat, edges, restoreId);
+
+    // 代わりの辺をcutする
+    cutEdge(Lmat, edges, cutId);
+
+    // solution側の記録も変更する
+    S.edgeId[position] = cutId;
+  }
+
+  // 乱した解の評価値を計算する
+  S.value = dijkstra(N, Lmat, v0, v1, d, p);
+
+  return S;
+}
 // 解を表示する関数
 void showAnswer(struct solution bestsolution, int M, int K, char *fname, struct edge_data edges[], int bestvalue)
 {
   int i, j;
-  printf("---Best solution---\n");
   printf("File Name: %s\n", fname);
   printf("Value: %d\n", bestsolution.value);
   printf("Best Value: %d\n", bestvalue);
@@ -343,7 +625,7 @@ void showAnswer(struct solution bestsolution, int M, int K, char *fname, struct 
   // 辺IDに対してどのu,vの辺かを表示する
   for (i = 0; i < bestsolution.count; i++)
   {
-    printf("u: %d, v: %d, w: %d\n", edges[bestsolution.edgeId[i]].u, edges[bestsolution.edgeId[i]].v, edges[bestsolution.edgeId[i]].w);
+    printf("(%3d, %3d) w: %d\n", edges[bestsolution.edgeId[i]].u, edges[bestsolution.edgeId[i]].v, edges[bestsolution.edgeId[i]].w);
   }
 }
 // FileNameとValueだけ表示する関数

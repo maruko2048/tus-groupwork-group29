@@ -40,12 +40,13 @@ void restoreEdge(int Lmat[maxN][maxN], struct edge_data edges[maxM], int id)
 
 ```C
 //完全に貪欲法でダイクストラ法を回す　消したedgeIDと長さと消した本数をsolutionに入れる
-void greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *sol)
+struct solution greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1)
 {
   int d[maxN];
   int p[maxN];
+  struct solution S;
 
-  sol->count = 0;
+  S.count = 0;
 
   for(int t=0;t<K;t++){
     // 現在の最短経路
@@ -54,39 +55,40 @@ void greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struc
     int bestEdge = -1;
     int bestValue = -1;
 
-        // 最短経路を逆向きにたどる
-        int v = v1;
+    // 最短経路を逆向きにたどる
+    int v = v1;
 
-        while(v != v0){
+    while(v != v0){
+      int u = p[v];
+      int id = edgeIdMat[u][v];
 
-            int u = p[v];
-            int id = edgeIdMat[u][v];
+      // 一時削除
+      cutEdge(Lmat,edges,id);
 
-            // 一時削除
-            cutEdge(Lmat,edges,id);
+      int value = dijkstra(N,Lmat,v0,v1,d,p);
 
-            int value = dijkstra(N,Lmat,v0,v1,d,p);
+      if(value > bestValue){
+        bestValue = value;
+        bestEdge = id;
+      }
 
-            if(value > bestValue){
-                bestValue = value;
-                bestEdge = id;
-            }
+      restoreEdge(Lmat,edges,id);
 
-            restoreEdge(Lmat,edges,id);
-
-            v = u;
-        }
-
-        if(bestEdge == -1)
-            break;
-
-        cutEdge(Lmat,edges,bestEdge);
-
-        sol->edgeId[sol->count] = bestEdge;
-        sol->count++;
+      v = u;
     }
 
-    sol->value = dijkstra(N,Lmat,v0,v1,d,p);
+    if(bestEdge == -1)
+      break;
+
+    cutEdge(Lmat,edges,bestEdge);
+
+    S.edgeId[S.count] = bestEdge;
+    S.count++;
+  }
+
+  S.value = dijkstra(N,Lmat,v0,v1,d,p);
+
+  return S;
 }
 ```
 
