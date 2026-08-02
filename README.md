@@ -1,151 +1,124 @@
 # プログラミング演習2 グループワーク
 
-T=1.229s である。
-コンピュータはだいたい1秒に10^8回計算できるので、オーダーが10^8を超えないように気を付ける。
+重み付き無向グラフから指定された本数の辺を取り除き、始点から終点までの最短経路長を最大化するプログラムである。
 
-# 命名規則
+# 実行方法
 
-- 初めは小文字
-- ローマ字読み使わない
+メインプログラムは第1引数から制限時間を受け取り、標準入力からデータファイル名を読み込む。制限時間を省略した場合は1秒となる。
+
+WSLでは次のコマンドで全データを実行できる。
+
+```bash
+./run_all.sh
+```
+
+Windowsでは次のバッチファイルを使用する。
+
+```bat
+run_all.bat
+```
+
+どちらのスクリプトも`binvec`を5回実行して時間の合計`T`を求める。data162系列の制限時間には`3*T`、それ以外には`T`を使用し、実行結果を`results.txt`へ出力する。
+
+# 入力データ
+
+データファイルは次の形式で記述する。
+
+```text
+N M
+u_1 v_1 w_1
+...
+u_M v_M w_M
+v0
+v1
+k
+bestvalue
+```
+
+- `N`: 頂点数
+- `M`: 辺数
+- `u_i`, `v_i`, `w_i`: 辺の両端点と重み
+- `v0`, `v1`: 始点と終点
+- `k`: 取り除く辺の本数
+- `bestvalue`: 既知の最良値
 
 # 関数一覧
 
 ```c
-int dijkstra(int N, int Lmat[maxN][maxN], int v0, int v1, int d[maxN], int p[maxN])←一旦ヒープ使う方にした
-(松村担当)
+int parent(int i);
+int left(int i);
+int right(int i);
+void insert(struct cell *H, int *adr, int i, int a, int v);
+void decrease_key(struct cell *H, int *adr, int i, int a);
+int delete_min(struct cell *H, int *adr, int hsize);
+void upheap_sort(struct cell *H, int *adr, int i);
+void downheap_sort(struct cell *H, int *adr, int last);
+int dijkstra(int N, int Lmat[maxN][maxN], int v0, int v1, int d[maxN], int p[maxN]);
+void cutEdge(int Lmat[maxN][maxN], struct edge_data edges[maxM], int id);
+void restoreEdge(int Lmat[maxN][maxN], struct edge_data edges[maxM], int id);
+struct solution greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1);
+struct solution disturbInitialSolution(int N, int M, int K, int Lmat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *basesolution, int disturbCount);
+void searchLocal(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *bestsolution, struct solution currentSolution, int goodNeighborCount);
+int makeNeighborAndTry(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *bestsolution, int id1, int id2);
+void showAnswer(struct solution bestsolution, int M, int K, char *fname, struct edge_data edges[], int bestvalue);
+void showValue(struct solution bestsolution, int M, int K, char *fname, struct edge_data edges[], int bestvalue);
 ```
+
+# 定数と構造体
 
 ```c
-void cutEdge(int Lmat[maxN][maxN], struct edge_data edges[maxM], int id){
-    int u = edges[id].u;
-    int v = edges[id].v;
-
-    Lmat[u][v] = inf;
-    Lmat[v][u] = inf;
-}
-```
-
-```C
-void restoreEdge(int Lmat[maxN][maxN], struct edge_data edges[maxM], int id)
-{
-  int u = edges[id].u;
-  int v = edges[id].v;
-  int w = edges[id].w;
-
-  Lmat[u][v] = w;
-  Lmat[v][u] = w;
-}
-//辺IDというのはstruct edgesの配列の何番目の要素かということ
-```
-
-```C
-//完全に貪欲法でダイクストラ法を回す　消したedgeIDと長さと消した本数をsolutionに入れる
-struct solution greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1)
-{
-  int d[maxN];
-  int p[maxN];
-  struct solution S;
-
-  S.count = 0;
-
-  for(int t=0;t<K;t++){
-    // 現在の最短経路
-    dijkstra(N,Lmat,v0,v1,d,p);
-
-    int bestEdge = -1;
-    int bestValue = -1;
-
-    // 最短経路を逆向きにたどる
-    int v = v1;
-
-    while(v != v0){
-      int u = p[v];
-      int id = edgeIdMat[u][v];
-
-      // 一時削除
-      cutEdge(Lmat,edges,id);
-
-      int value = dijkstra(N,Lmat,v0,v1,d,p);
-
-      if(value > bestValue){
-        bestValue = value;
-        bestEdge = id;
-      }
-
-      restoreEdge(Lmat,edges,id);
-
-      v = u;
-    }
-
-    if(bestEdge == -1)
-      break;
-
-    cutEdge(Lmat,edges,bestEdge);
-
-    S.edgeId[S.count] = bestEdge;
-    S.count++;
-  }
-
-  S.value = dijkstra(N,Lmat,v0,v1,d,p);
-
-  return S;
-}
-```
-
-グラフに対しダイクストラ法で最短経路の長さを求める。intで長さを返す。
-
-- ダイクストラ法の関数
-- 構成法(貪欲法,ランダム生成)の関数
-- 改善法(多スタート局所探索法)の関数
-
-# 変数一覧
-
-## main外
-
-```C
 #define maxN 200
 #define maxM 400
+#define maxK 20
 #define inf 1000000
-```
 
-```C
-struct edge_data {
-  int u; //この頂点から
-  int v; //この頂点まで
-  int w; //重み(辺の重みを戻すときこれを使う)
+long long dijkstraCount = 0;
+
+struct edge_data
+{
+  int u;
+  int v;
+  int w;
 };
 
-struct solution {
-  int edgeId[maxK]; //消す辺のID
-  int count; //今何個消しているか
-  int value; //最短経路の長さ
+struct solution
+{
+  int edgeId[maxK];
+  int count;
+  int value;
 };
 
-struct cell { //ヒープ用
+struct cell
+{
   int key;
   int vertex;
 };
 ```
 
-## main内
+- `edge_data`: 辺の両端点と重みを保持する。
+- `solution`: 取り除く辺のID、その本数、始点から終点までの最短経路長を保持する。
+- `cell`: ダイクストラ法のヒープで、距離と頂点番号を保持する。
+- `dijkstraCount`: ダイクストラ法を呼び出した回数を数える。
 
-```C
-int i,j //いつもの
-int N, M; //頂点数, 辺数
-int v0, v1; //始点, 終点を表す
-int k; //消す辺の数
-int d[maxN], p[maxN]; //始点から各頂点までの最短距離、最短経路木での親頂点を格納する
-int Lmat[maxN][maxN];      // 重み行列
-int edgeIdMat[maxN][maxN]; // 頂点u-v間の辺ID
-struct edge edges[maxM];   // 辺IDごとの辺情報
-struct solution bestsolution; //ベストな解
+# 主な変数
 
-```
+- `Lmat`: 辺の重みを保持する隣接行列。辺が存在しない場合や削除中の辺には`inf`を設定する。
+- `edgeIdMat`: 2頂点間に対応する辺IDを保持する行列。
+- `edges`: 辺IDから両端点と重みを取得するための配列。
+- `greedysolution`: 貪欲法で生成した初期解。
+- `currentSolution`: 攪乱と局所探索の対象となる現在解。
+- `bestsolution`: 探索中に得られた最良解。
+- `disturbCount`: 初期解から入れ替える辺の本数。
 
-# 細かい仕様
+# 探索方法
 
-- 初期解生成はSの切り落とす辺の重みを1000000にすることによって実現
-- 初期状態のSと作業中のSと最良解のSをもつ
+1. 貪欲法で、現在の最短経路上から削除後の評価値が最大となる辺を1本ずつ選び、初期解を生成する。
+2. 初期解に対して局所探索を行う。
+3. 貪欲解を基準に、削除中の辺と未削除の辺を`disturbCount`本ずつ入れ替える。
+4. 攪乱した解に対して局所探索を行い、より良い解が見つかれば最良解を更新する。
+5. `disturbCount`を2から10まで変化させながら、制限時間を超えるまで手順3と4を繰り返す。
+
+局所探索では、削除中の辺を1本復元し、そのときの最短経路上の辺を1本削除して近傍解を作る。改善近傍を2個見つけるか全候補を調べるまで探索し、見つかった改善近傍のうち評価値が最大の交換を現在解へ反映する。改善近傍がなくなった時点で局所探索を終了する。
 
 # フローチャート
 
@@ -174,4 +147,45 @@ flowchart TD
     timeOver -- NO --> resetCurrent
     timeOver -- YES --> output[最良解・探索回数・実行時間を出力]
     output --> END([END])
+```
+
+## 局所探索
+
+以下にsearchLocalのフローチャートを示す。
+
+```mermaid
+%%{init:{'theme':'dark'}}%%
+flowchart TD
+    START_LOCAL([局所探索開始]) --> init[改善近傍数を0にし<br/>現在解の評価値を暫定最良値にする]
+    init --> oldEdge{未確認の削除辺 id1 がある?}
+
+    oldEdge -- YES --> restoreOld[id1を復元して<br/>ダイクストラ法を実行]
+    restoreOld --> savePath[最短経路を保存し<br/>id1を再び削除]
+    savePath --> pathEdge{最短経路上に<br/>未確認の辺 id2 がある?}
+
+    pathEdge -- NO --> nextOld[id1を次の削除辺へ進める]
+    nextOld --> oldEdge
+    pathEdge -- YES --> canSwap{id1とid2が異なり<br/>id2が削除中でない?}
+    canSwap -- NO --> nextPath[id2を最短経路上の<br/>次の辺へ進める]
+
+    canSwap -- YES --> tryNeighbor[id1を復元してid2を削除し<br/>ダイクストラ法で評価して元に戻す]
+    tryNeighbor --> improved{現在解より良い?}
+    improved -- NO --> enough
+    improved -- YES --> count[改善近傍数を1増やす]
+    count --> bestCandidate{暫定最良値より良い?}
+    bestCandidate -- YES --> saveCandidate[交換するid1とid2と<br/>評価値を保存]
+    bestCandidate -- NO --> enough
+    saveCandidate --> enough{改善近傍を2個見つけた?}
+
+    enough -- NO --> nextPath
+    nextPath --> pathEdge
+    enough -- YES --> hasImprovement
+    oldEdge -- NO --> hasImprovement{改善近傍が見つかった?}
+
+    hasImprovement -- NO --> END_LOCAL([局所探索終了])
+    hasImprovement -- YES --> applySwap[最良候補のid1を復元し<br/>id2を削除して現在解を更新]
+    applySwap --> updateBest{現在解が最良解より良い?}
+    updateBest -- YES --> saveBest[最良解を現在解で更新]
+    updateBest -- NO --> init
+    saveBest --> init
 ```
