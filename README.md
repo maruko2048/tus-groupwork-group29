@@ -154,40 +154,24 @@ struct solution bestsolution; //ベストな解
 ```mermaid
 %%{init:{'theme':'dark'}}%%
 flowchart TD
-    START([START]) --> read[入力を読む]
+    START([START]) --> read[入力ファイルを読み込む]
     read --> timer[時間計測開始]
-    timer --> first[1回目の初期解生成]
+    timer --> greedy[貪欲法で初期解を生成]
+    greedy --> initialize[初期解を最良解と現在解に設定]
+    initialize --> firstLocal[初期解を局所探索]
+    firstLocal --> initDisturb[disturbCountを1に設定]
 
-    first --> greedy[完全貪欲法で初期解 S を作る]
-    greedy --> evalS[S の評価値を計算]
-    evalS --> setBest[best = S とする]
+    initDisturb --> resetCurrent[現在解を貪欲解に戻す]
+    resetCurrent --> increment[disturbCountを1増やす]
+    increment --> overLimit{disturbCountが10より大きい?}
+    overLimit -- YES --> resetDisturb[disturbCountを2に戻す]
+    overLimit -- NO --> disturb
+    resetDisturb --> disturb[現在解の辺を<br/>disturbCount本入れ替える]
 
-    setBest --> local[局所探索を開始]
-
-    local --> makeNeighbor[近傍を調べる<br/>S から1本戻し<br/>最短路上の辺を1本削除]
-    makeNeighbor --> better{より良い近傍解がある?}
-
-    better -- YES --> updateS[S を更新]
-    updateS --> local
-
-    better -- NO --> localEnd[この初期解に対する<br/>局所探索終了]
-
-    localEnd --> updateBest{best より良い?}
-    updateBest -- YES --> saveBest[best を更新]
-    updateBest -- NO --> checkTime[時間確認]
-    saveBest --> checkTime
-
-    checkTime --> timeLeft{まだ時間がある?}
-    timeLeft -- YES --> randomInit[新しい初期解を生成]
-    timeLeft -- NO --> output[best を出力]
-
-    randomInit --> randomGreedy[ランダム化貪欲法で<br/>初期解 S を作る]
-    randomGreedy --> local
-
+    disturb --> local[乱した現在解を局所探索し<br/>必要なら最良解を更新]
+    local --> elapsed[経過時間を計算]
+    elapsed --> timeOver{制限時間を超えた?}
+    timeOver -- NO --> resetCurrent
+    timeOver -- YES --> output[最良解・探索回数・実行時間を出力]
     output --> END([END])
-```
-
-```mermaid
-%%{init:{'theme':'dark'}}%%
-
 ```
