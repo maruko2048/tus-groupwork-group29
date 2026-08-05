@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <math.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
@@ -8,8 +7,6 @@
 #define maxM 400
 #define maxK 20
 #define inf 1000000
-
-long long dijkstraCount = 0;
 
 struct edge_data
 {
@@ -46,12 +43,10 @@ void restoreEdge(int Lmat[maxN][maxN], struct edge_data edges[maxM], int id);
 struct solution greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1);
 struct solution disturbInitialSolution(int N, int M, int K, int Lmat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *basesolution, int disturbCount);
 // 局所探索ゾーン
-void searchLocal(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *bestsolution, struct solution currentSolution, int goodNeighborCount); // 局所探索を行う関数
-int makeNeighborAndTry(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *bestsolution, int id1, int id2);                                 // 与えられたID1の辺を復元し、ID2の辺を削除し、評価し、更新をしたりしなかったりする
+void searchLocal(int N, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *bestsolution, struct solution currentSolution, int goodNeighborCount); // 局所探索を行う関数
+int makeNeighborAndTry(int N, int Lmat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, int id1, int id2);                                                                                           // 与えられたID1の辺を復元し、ID2の辺を削除し、評価し、更新をしたりしなかったりする
 // ここまで
-void showAnswer(struct solution bestsolution, int M, int K, char *fname, struct edge_data edges[], int bestvalue);
-void showValue(struct solution bestsolution, int M, int K, char *fname, struct edge_data edges[], int bestvalue);
-
+void showAnswer(struct solution bestsolution, char *fname, struct edge_data edges[], int bestvalue);
 /*ファイル名の取得とかデータの読み込みとかとりあえず書いてみたけど違ってたらごめん*/
 // ↑一回やってみないとわからんね～ナイス
 // ファイル名が存在しないとか、そういう例外処理は今回「考えない」
@@ -72,19 +67,18 @@ int main(int argc, char *argv[])
   }
 
   /*変数一覧から持ってきたもの*/
-  int i, j;                        // いつもの
+  int i;                           // いつもの
   int N, M;                        // 頂点数, 辺数
   int v0, v1;                      // 始点, 終点を表す
   int k;                           // 消す辺の数
-  int d[maxN], p[maxN];            // 始点から各頂点までの最短距離、最短経路木での親頂点を格納する
   int Lmat[maxN][maxN];            // 重み行列
   int edgeIdMat[maxN][maxN];       // 頂点u-v間の辺ID
+  int goodNeighborCount = 5;       // 局所探索で見つけるより良い近傍解の数
+  int maxDisturbCount = 10;        // 初期解を乱すときの辺の最大乱し数
   struct edge_data edges[maxM];    // 辺IDごとの辺情報
   struct solution bestsolution;    // ベストな解
-  struct solution initialsolution; //= {0}; // 完全貪欲法
   struct solution currentSolution; // 局所探索で使う
   struct solution greedysolution;  // 貪欲法で作った解
-  int searchCount = 0;
 
   int u, v, len;
   int bestvalue;
@@ -126,25 +120,35 @@ int main(int argc, char *argv[])
   fscanf(fp, "%d", &k);
   fscanf(fp, "%d", &bestvalue);
   fclose(fp);
+  // goodNeighborCountとmaxDisturbCountもコマンドライン引数で指定できるようにする　いろいろ試すため
+
+  if (argc > 2)
+  {
+    goodNeighborCount = atoi(argv[2]);
+  }
+  if (argc > 3)
+  {
+    maxDisturbCount = atoi(argv[3]);
+  }
 
   // 処理開始
   start_t = clock();
-  greedysolution = greedy(N, k, Lmat, edgeIdMat, edges, v0, v1);
-  bestsolution = greedysolution; // とりあえず貪欲法の解を最良としておく
-  currentSolution = greedysolution;
-  searchLocal(N, k, Lmat, edgeIdMat, edges, v0, v1, &bestsolution, currentSolution, 2); // 3個のより良い近傍解を見つけたら更新する 3は勘で設定した
-  // disturbCountは2->3->4->5->2->3->4->5...と繰り返す 1は局所探索でやってるのとほぼ同じなので
+  greedysolution = greedy(N, k, Lmat, edgeIdMat, edges, v0, v1);                                     // 貪欲法で初期解を作る
+  bestsolution = greedysolution;                                                                     // とりあえず貪欲法の解を最良としておく
+  currentSolution = greedysolution;                                                                  // 局所探索で使う解を貪欲法の解で初期化する
+  searchLocal(N, Lmat, edgeIdMat, edges, v0, v1, &bestsolution, currentSolution, goodNeighborCount); // 局所探索
+  // disturbCountは2->3->...->maxDisturbCount->2->...と繰り返す 1は局所探索でやってるのとほぼ同じなので
   int disturbCount = 1; // 乱す辺の数
   while (1)
   {
     currentSolution = greedysolution;
     disturbCount++;
-    if (disturbCount > 10)
+    if (disturbCount > maxDisturbCount)
     {
       disturbCount = 2;
     }
-    currentSolution = disturbInitialSolution(N, M, k, Lmat, edges, v0, v1, &currentSolution, disturbCount);
-    searchLocal(N, k, Lmat, edgeIdMat, edges, v0, v1, &bestsolution, currentSolution, 2); // 3個のより良い近傍解を見つけたら更新する 3は勘で設定した
+    currentSolution = disturbInitialSolution(N, M, k, Lmat, edges, v0, v1, &currentSolution, disturbCount); // 作業解をdisturbCountの数だけ乱す
+    searchLocal(N, Lmat, edgeIdMat, edges, v0, v1, &bestsolution, currentSolution, goodNeighborCount);      // 生成した初期解に対して局所探索
     end_t = clock();
     utime = (double)(end_t - start_t) / CLOCKS_PER_SEC;
     if (utime > time_limit)
@@ -152,9 +156,8 @@ int main(int argc, char *argv[])
       break;
     }
   }
-  showAnswer(bestsolution, M, k, fname, edges, bestvalue);
-  // showValue(bestsolution, M, k, fname, edges, bestvalue);
-  printf("Dijkstra calls: %lld\n", dijkstraCount);
+  showAnswer(bestsolution, fname, edges, bestvalue);
+
   printf("time: %f sec\n", utime);
   return 0;
 }
@@ -162,7 +165,6 @@ int main(int argc, char *argv[])
 /*ダイクストラ絡みゾーン2 始まり*/
 int dijkstra(int N, int Lmat[maxN][maxN], int v0, int v1, int d[maxN], int p[maxN])
 {
-  dijkstraCount++;
   struct cell Heap[maxN]; /* ヒープに用いる配列の宣言 */
   int adr[maxN];          /* ヒープに含まれる頂点のアドレスの配列 */
   int hsize;              /* ヒープに格納された頂点の数 */
@@ -375,9 +377,8 @@ struct solution greedy(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][m
 
   return S;
 }
-// 近傍解探索(いい近傍解を見つけて更新するだけ)
 // goodNeighborCount個のより良い近傍解を見つけたら一番良いものに更新するようにする.
-void searchLocal(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *bestsolution, struct solution currentSolution, int goodNeighborCount)
+void searchLocal(int N, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *bestsolution, struct solution currentSolution, int goodNeighborCount)
 {
   int d[maxN], p[maxN], temp_p[maxN];
   int isImproved = 1;
@@ -436,8 +437,8 @@ void searchLocal(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], 
 
         if (id1 != id2 && !alreadyDeleted)
         {
-          // makeNeighborAndTryは評価後に必ずcurrentSolutionへ戻す
-          value = makeNeighborAndTry(N, K, Lmat, edgeIdMat, edges, v0, v1, &currentSolution, id1, id2);
+          // 　評価後にcurrentSolutionへ戻す
+          value = makeNeighborAndTry(N, Lmat, edges, v0, v1, id1, id2);
 
           if (value > currentSolution.value)
           {
@@ -491,12 +492,8 @@ void searchLocal(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], 
   }
 }
 // 1つの辺を復元し、1つの辺を削除することで近傍解を作り、評価する関数 評価値を返す。更新はしない。
-int makeNeighborAndTry(int N, int K, int Lmat[maxN][maxN], int edgeIdMat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, struct solution *bestsolution, int id1, int id2)
+int makeNeighborAndTry(int N, int Lmat[maxN][maxN], struct edge_data edges[maxM], int v0, int v1, int id1, int id2)
 {
-  if (id1 == id2)
-  {
-    return 0; // 無駄なので
-  }
   // id1の辺を復元
   restoreEdge(Lmat, edges, id1);
   // id2の辺を削除
@@ -615,9 +612,9 @@ struct solution disturbInitialSolution(int N, int M, int K, int Lmat[maxN][maxN]
   return S;
 }
 // 解を表示する関数
-void showAnswer(struct solution bestsolution, int M, int K, char *fname, struct edge_data edges[], int bestvalue)
+void showAnswer(struct solution bestsolution, char *fname, struct edge_data edges[], int bestvalue)
 {
-  int i, j;
+  int i;
   printf("File Name: %s\n", fname);
   printf("Value: %d\n", bestsolution.value);
   printf("Best Value: %d\n", bestvalue);
@@ -627,11 +624,4 @@ void showAnswer(struct solution bestsolution, int M, int K, char *fname, struct 
   {
     printf("(%3d, %3d) w: %d\n", edges[bestsolution.edgeId[i]].u, edges[bestsolution.edgeId[i]].v, edges[bestsolution.edgeId[i]].w);
   }
-}
-// FileNameとValueだけ表示する関数
-void showValue(struct solution bestsolution, int M, int K, char *fname, struct edge_data edges[], int bestvalue)
-{
-  printf("File Name: %s\n", fname);
-  printf("Value: %d\n", bestsolution.value);
-  printf("Best Value: %d\n", bestvalue);
 }
